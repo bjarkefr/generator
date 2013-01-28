@@ -21,6 +21,9 @@ def exists(env):
     return env.Detect(['protoc'])
 
 env = Environment()
+if env['PLATFORM'] == 'win32':
+	env = Environment(tools = ['mingw']);
+
 generate(env);
 
 PrecompAction = SCons.Action.Action('${CXX} ${CCFLAGS} ${SOURCES} -o ${TARGET}')

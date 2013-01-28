@@ -1,45 +1,11 @@
 #include "../precompiled/all.h"
 #include "Utils/Point.h"
 #include "Utils/Area.h"
+#include "Utils/D2Array.h"
 
 using namespace std;
 using namespace boost;
 using namespace Utils;
-
-template<class T, int H, int W> class D2Array
-{
-	T data[H][W];
-
-	void CheckBounds(const Point& p) const
-	{
-		if(p.Y < 0 || p.Y >= H)
-			throw string("Badness 10000");
-		if(p.X < 0 || p.X >= W)
-			throw string("Badness 10000");
-	}
-
-public:
-	D2Array(const T& init)
-	{
-		for(T* d : data)
-			*d = init;
-	}
-
-	int Width() const { return W; }
-	int Height() const { return H; }
-
-	const T& operator[](const Point& p) const
-	{
-		CheckBounds(p);
-		return data[p.Y][p.X];
-	}
-
-	T& operator[](const Point& p)
-	{
-		CheckBounds(p);
-		return data[p.Y][p.X];
-	}
-};
 
 enum ROOM_TYPE { PRIVATE_ROOM, PRIVATE_ROOM_STORAGE, STORAGE, BATHROOM, HALL, DUMMY};
 
@@ -79,7 +45,7 @@ public:
 
 typedef vector<std::shared_ptr<Room>> RoomList;
 
-typedef D2Array<Placement*, 10, 10> FloorPlan;
+typedef D2Array<Placement*> FloorPlan;
 //typedef boost::multi_array<Placement*, 2> FloorPlan;
 //typedef boost::array<FloorPlan::index, 2> PlanCoord;
 
@@ -137,13 +103,16 @@ RoomList SetupRooms()
 //
 //}
 
-//void PrintPlan(const FloorPlan& plan)
-//{
-//    for(const Placement * const p : plan)
-//    {
-//
-//    }
-//}
+void PrintPlan(const FloorPlan& plan)
+{
+    for(int y = 0; y < plan.Height(); ++y)
+    {
+    	for(int x = 0; x < plan.Width(); ++x)
+    		cout << plan[Point(x, y)]->Template->GetSymbol();
+
+    	cout << endl;
+    }
+}
 
 int main(int argc, char *argv[])
 {
@@ -157,7 +126,7 @@ int main(int argc, char *argv[])
 	Area area(p1, p2);
 	Placement dummyPlacement(&dummyRoom, area);
 
-	FloorPlan plan = FloorPlan(&dummyPlacement);
+	FloorPlan plan = FloorPlan(10, 10, &dummyPlacement);
 
 	Room room;
 	room.Type = STORAGE;
@@ -167,9 +136,11 @@ int main(int argc, char *argv[])
 	Area a2(p3, p4);
 	Placement place2(&room, a2);
 
-	plan[Point(0,0)] = &place2;
+	plan[Point(3,2)] = &place2;
 
-	cout << plan[Point(0,0)]->ToString() << endl;
+	cout << plan[Point(3,2)]->ToString() << endl;
+
+	PrintPlan(plan);
 
 	//dummyPlacement.Template = &dummyRoom;
 	

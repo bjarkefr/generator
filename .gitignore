@@ -1,0 +1,5 @@
+*.[oa]
+*.h.gch
+*.dblite
+*.exe
+/generate

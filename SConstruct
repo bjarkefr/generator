@@ -44,7 +44,7 @@ env['CCFLAGS']='-g3 -Wall -std=c++11 -pedantic -I/usr/local/include'
 
 precompiled = env.Gch('precompiled/all.h.gch', 'precompiled/all.h')
 
-source = Glob('src/*.cc')
+source = Glob('src/*.cc') + Glob('src/Utils/Algorithm/*.cc')
 
 generate_program = env.Program('generate',
     source,

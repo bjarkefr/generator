@@ -3,9 +3,9 @@
 
 namespace Utils {
 	namespace Algorithm {
-		class TreeMapper<> {
+		class TreeMapper {
 		public:
-			TreeMapper();
+			TreeMapper(vector<>);
 		};
 	}
 }

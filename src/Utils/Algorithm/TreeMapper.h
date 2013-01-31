@@ -31,14 +31,18 @@ namespace Utils
 
 		class TreeMapper
 		{
+			double width;
+			double height;
 			const std::vector<Node>& nodes;
+			double *current_length;
+			double *other_length;
 			std::vector<Placement> placements;
-			void layoutrow(vector<int>& row);
-			int width();
-			int worst(vector<int>& row, int w);
-			void squarify(vector<int>& children, vector<int>& row, int w);
+			void select_direction();
+			void layoutrow(vector<double>& row);
+			double worst(vector<double>& row, double w);
+			void squarify(vector<double>& children, vector<double>& row, double w);
 		public:
-			TreeMapper(const std::vector<Node>& nodes);
+			TreeMapper(int w, int h, const std::vector<Node>& nodes);
 			std::vector<Placement> Map();
 		};
 	}

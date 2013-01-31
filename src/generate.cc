@@ -2,10 +2,13 @@
 #include "Utils/Point.h"
 #include "Utils/Area.h"
 #include "Utils/D2Array.h"
+#include "Utils/Algorithm/TreeMapper.h"
 
 using namespace std;
 using namespace boost;
 using namespace Utils;
+using namespace Utils::Algorithm;
+
 
 enum ROOM_TYPE { PRIVATE_ROOM, PRIVATE_ROOM_STORAGE, STORAGE, BATHROOM, HALL, DUMMY};
 
@@ -32,20 +35,20 @@ public:
     string ToString() const { stringstream ss; ss << GetName() << " S:" << Size; return ss.str(); }
 };
 
-class Placement
-{
-public:
-    Placement(Room* _template, Area& allocation):Template(_template), Allocation(allocation) {}
-    Room* Template;
-    Area Allocation;
-    string ToString() const { stringstream ss; ss << Template->ToString() << " - " << Allocation.ToString(); return ss.str(); }
-};
+//class Placement
+//{
+//public:
+//    Placement(Room* _template, Area& allocation):Template(_template), Allocation(allocation) {}
+//    Room* Template;
+//    Area Allocation;
+//    string ToString() const { stringstream ss; ss << Template->ToString() << " - " << Allocation.ToString(); return ss.str(); }
+//};
 
 //typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, Room> Graph;
 
 typedef vector<std::shared_ptr<Room>> RoomList;
 
-typedef D2Array<Placement*> FloorPlan;
+//typedef D2Array<Placement*> FloorPlan;
 //typedef boost::multi_array<Placement*, 2> FloorPlan;
 //typedef boost::array<FloorPlan::index, 2> PlanCoord;
 
@@ -103,56 +106,76 @@ RoomList SetupRooms()
 //
 //}
 
-void PrintPlan(const FloorPlan& plan)
-{
-    for(int y = 0; y < plan.Height(); ++y)
-    {
-    	for(int x = 0; x < plan.Width(); ++x)
-    		cout << plan[Point(x, y)]->Template->GetSymbol();
-
-    	cout << endl;
-    }
-}
+//void PrintPlan(const FloorPlan& plan)
+//{
+//    for(int y = 0; y < plan.Height(); ++y)
+//    {
+//    	for(int x = 0; x < plan.Width(); ++x)
+//    		cout << plan[Point(x, y)]->Template->GetSymbol();
+//
+//    	cout << endl;
+//    }
+//}
 
 int main(int argc, char *argv[])
 {
-	Room dummyRoom;
-	dummyRoom.Type = DUMMY;
-	dummyRoom.Size = 0;
+	try
+	{
+		Room dummyRoom;
+		dummyRoom.Type = DUMMY;
+		dummyRoom.Size = 0;
+
+		RoomList rooms = SetupRooms();
+
+		//Point p1(0, 0), p2(10, 10);
+		//Area area(p1, p2);
+		//Placement dummyPlacement(&dummyRoom, area);
+
+		//FloorPlan plan = FloorPlan(10, 10, &dummyPlacement);
+
+		Room room;
+		room.Type = STORAGE;
+		room.Size = 10;
+
+		Point p3(2,2), p4(2,4);
+		Area a2(p3, p4);
+		//Placement place2(&room, a2);
+
+		vector<Node> nodes;
+		nodes.push_back(Node(1));
+		nodes.push_back(Node(2));
+		nodes.push_back(Node(2));
+		nodes.push_back(Node(3));
+		nodes.push_back(Node(4));
+		nodes.push_back(Node(6));
+		nodes.push_back(Node(6));
+
+		TreeMapper mapper = TreeMapper(6, 4, nodes);
+
+		mapper.Map();
+
+		//plan[Point(3,2)] = &place2;
+
+		//cout << plan[Point(3,2)]->ToString() << endl;
+
+		//PrintPlan(plan);
+
+		//dummyPlacement.Template = &dummyRoom;
+
+	//	for(auto i = plan.data(); i != plan.data() + plan.num_elements(); ++i)
+	//	{
+	//		*i = &dummyPlacement;
+	//	    cout << (*i)->Allocation.Size().ToString() << endl; // = &dummyPlacement;
+	//	}
 	
-	RoomList rooms = SetupRooms();
-
-	Point p1(0, 0), p2(10, 10);
-	Area area(p1, p2);
-	Placement dummyPlacement(&dummyRoom, area);
-
-	FloorPlan plan = FloorPlan(10, 10, &dummyPlacement);
-
-	Room room;
-	room.Type = STORAGE;
-	room.Size = 10;
-
-	Point p3(2,2), p4(2,4);
-	Area a2(p3, p4);
-	Placement place2(&room, a2);
-
-	plan[Point(3,2)] = &place2;
-
-	cout << plan[Point(3,2)]->ToString() << endl;
-
-	PrintPlan(plan);
-
-	//dummyPlacement.Template = &dummyRoom;
+	/*	Point p(1, 2), p2(3, 4);
+		cout << Area(p, p2).ToString() << endl;
+		cout << Area(p, p2).Size().ToString() << endl;*/
 	
-//	for(auto i = plan.data(); i != plan.data() + plan.num_elements(); ++i)
-//	{
-//		*i = &dummyPlacement;
-//	    cout << (*i)->Allocation.Size().ToString() << endl; // = &dummyPlacement;
-//	}
-
-/*	Point p(1, 2), p2(3, 4);
-	cout << Area(p, p2).ToString() << endl;
-	cout << Area(p, p2).Size().ToString() << endl;*/
-
-	//cout << *(graph[v0].GetName()) << endl;
+		//cout << *(graph[v0].GetName()) << endl;
+	}
+	catch(string& e)
+	{
+		cout << "BFE: " << e << endl;
+	}
 }

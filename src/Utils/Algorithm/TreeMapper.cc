@@ -3,49 +3,67 @@
 #include "../Area.h"
 #include "TreeMapper.h"
 
+#include <cstdio>
+
 using namespace Utils;
 using namespace Utils::Algorithm;
 
 using namespace std;
 using namespace boost::adaptors;
-using namespace boost::range;
 
-TreeMapper::TreeMapper(const vector<Node>& nodes):nodes(nodes) {}
-
-void TreeMapper::layoutrow(vector<int>& row)
+TreeMapper::TreeMapper(int width, int height, const vector<Node>& nodes):width((double)width),height((double)height),nodes(nodes)
 {
-
+	select_direction();
 }
 
-int TreeMapper::width()
+void TreeMapper::select_direction()
 {
-	return 0;
+	current_length = width > height ? &height : &width;
+	other_length = current_length == &width ? &height : &width;
 }
 
-int TreeMapper::worst(vector<int>& row, int w)
+void TreeMapper::layoutrow(vector<double>& row)
 {
-	int s = accumulate(row.begin(), row.end(), 0);
+	double row_area = accumulate(row.begin(), row.end(), 0.);
+	double width = row_area / *current_length;
+
+	for(double box_area : row)
+		printf("Box (%f, %f) @%f\n", width, box_area / width, box_area);
+
+	*other_length -= width;
+	select_direction();
+	printf("Remaining area (%f, %f) @%f\n\n", width, height, width * height);
+}
+
+double TreeMapper::worst(vector<double>& row, double w)
+{
+	double s = accumulate(row.begin(), row.end(), 0.);
 	s = s * s;
 	w = w * w;
 
-	auto rng = transform(row, [=](int r) { return max((w * r) / s, s / (w * r)); } );
-	vector<int> row2(rng.begin(), rng.end());
+	auto rng = transform(row, [=](double r)->double { return max((w * r) / s, s / (w * r)); } );
+	vector<int> row2(rng.begin(), rng.end()); // should not be required...
 
 	auto mi = max_element(row2.begin(), row2.end());
 	if(mi == row2.end())
-		throw string("No elements!?");
+		return numeric_limits<double>::max();
 
 	return *mi;
 }
 
-void TreeMapper::squarify(vector<int>& children, vector<int>& row, int w)
+void TreeMapper::squarify(vector<double>& children, vector<double>& row, double w)
 {
+	if(children.empty())
+		return;
+
 	int c = children.back();
 
-	vector<int> new_row(row);
+	vector<double> new_row(row);
 	new_row.push_back(c);
 
-	if (worst(row, w) <= worst(new_row, w))
+	printf("%f <= %f\n", worst(row, w), worst(new_row, w));
+
+	if (worst(row, w) > worst(new_row, w))
 	{
 		children.pop_back();
 		squarify(children, new_row, w);
@@ -53,18 +71,18 @@ void TreeMapper::squarify(vector<int>& children, vector<int>& row, int w)
 	else
 	{
 		layoutrow(row);
-		auto row = vector<int>();
-		squarify(children, row, width());
+		auto row = vector<double>();
+		squarify(children, row, *current_length);
 	}
 }
 
 vector<Placement> TreeMapper::Map()
 {
-	auto range = transform(nodes, [](const Node& item) { return item.GetArea(); });
-	vector<int> children(range.begin(), range.end());
+	auto range = transform(nodes, [](const Node& item) { return (double)item.GetArea(); });
+	vector<double> children(range.begin(), range.end());
 
-	auto row = vector<int>();
-	squarify(children, row, 100);
+	auto row = vector<double>();
+	squarify(children, row, *current_length);
 
 	vector<Placement> placements;
 	return placements;

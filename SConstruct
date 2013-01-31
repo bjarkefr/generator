@@ -40,7 +40,7 @@ def generate(env):
 generate(env);
 env.Decider('timestamp-newer');
 
-env['CCFLAGS']='-g3 -Wall -std=c++11 -pedantic -I/usr/local/include'
+env['CCFLAGS']='-gstabs+ -Wall -std=c++11 -pedantic -I/usr/local/include'
 
 precompiled = env.Gch('precompiled/all.h.gch', 'precompiled/all.h')
 

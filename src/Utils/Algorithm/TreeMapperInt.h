@@ -45,17 +45,14 @@ namespace Utils
 		{
 			int width;
 			int height;
-			std::shared_ptr<AllocationSet> allocated;
 			std::shared_ptr<AllocationSet> candidates;
-			int *current_length;
-			int *other_length;
-			//void select_direction();
-			//void layoutrow(vector<double>& row);
-			//double worst(vector<double>& row, double w);
+			int* SelectDirection();
+			void LayoutRow(const AllocationSet& rowSet, int* row_length, int row_area);
+			//int worst(vector<double>& row, double w);
 			//void squarify(vector<double>& children, vector<double>& row, double w);
 		public:
 			TreeMapperInt(const Point& dimensions, std::shared_ptr<AllocationSet> candidates);
-			std::shared_ptr<AllocationSet> Map();
+			void Map();
 		};
 	}
 }

@@ -15,6 +15,7 @@ namespace Utils
 		Point Swap() { return Point(y, x); }
 		Point operator+(const Point& p) const { return Point(x + p.x, y + p.y); }
 		Point operator-(const Point& p) const { return Point(x - p.x, y - p.y); }
+		bool operator==(const Point& p) const { return x == p.x && y == p.y; }
 		string ToString() const { stringstream ss; ss << "(" << x << ", " << y << ")"; return ss.str(); }
 	};
 }

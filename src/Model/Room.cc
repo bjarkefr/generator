@@ -3,7 +3,7 @@
 
 const char* ROOM_TEXTS[] = { "Private", "Private storage", "Storage", "Bathroom", "Hall", "Dummy" };
 
-const char ROOM_CHAR[] = { '\xB0', 'C', 'S', 'W', '.', ' ' };
+const char ROOM_CHAR[] = { 'P', 'C', 'S', 'W', '.', ' ' };
 
 using namespace Model;
 using namespace std;

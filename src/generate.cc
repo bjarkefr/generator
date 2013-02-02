@@ -58,6 +58,7 @@ int main(int argc, char *argv[])
 		rooms->push_back(std::shared_ptr<Room>(new Room(HALL, 3)));
 		rooms->push_back(std::shared_ptr<Room>(new Room(PRIVATE_ROOM, 2)));
 		rooms->push_back(std::shared_ptr<Room>(new Room(PRIVATE_ROOM_STORAGE, 2)));
+		rooms->push_back(std::shared_ptr<Room>(new Room(PRIVATE_ROOM_STORAGE, 1)));
 
 		std::shared_ptr<vector<std::shared_ptr<Placeable>>> placeables(new vector<std::shared_ptr<Placeable>>(rooms->begin(), rooms->end()));
 

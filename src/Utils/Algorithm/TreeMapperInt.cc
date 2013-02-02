@@ -11,6 +11,8 @@ using namespace Utils::Algorithm;
 using namespace std;
 //using namespace boost::adaptors;
 
+//TODO: doubles with rounding. Prevent size 0 rooms. Penalty for unused space...
+
 TreeMapperInt::TreeMapperInt(const Point& dimensions, shared_ptr<AllocationSet> candidates):width(dimensions.X()),height(dimensions.Y()),candidates(candidates)
 {
 }

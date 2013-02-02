@@ -23,7 +23,7 @@ namespace Utils
 		}
 
 	public:
-		D2Array(int height, int width, const T& init):h(height), w(width), data(new T[height * width])
+		D2Array(const Point& dimensions, const T& init):h(dimensions.Y()), w(dimensions.X()), data(new T[dimensions.X() * dimensions.Y()])
 		{
 			for(int i = 0; i < h * w; ++i)
 				data[i] = init;

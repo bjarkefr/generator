@@ -24,6 +24,11 @@ namespace Model
 	    	return Size;
 	    }
 
+	    std::shared_ptr<Utils::Area> Location() const
+	    {
+	    	return location;
+	    }
+
 	    void Place(std::shared_ptr<Utils::Area> location);
 
 	    std::string ToString() const;

@@ -9,7 +9,7 @@ using namespace Utils;
 using namespace Utils::Algorithm;
 
 using namespace std;
-using namespace boost::adaptors;
+//using namespace boost::adaptors;
 
 TreeMapperInt::TreeMapperInt(const Point& dimensions, shared_ptr<AllocationSet> candidates):width(dimensions.X()),height(dimensions.Y()),candidates(candidates)
 {
@@ -114,86 +114,3 @@ void TreeMapperInt::Map()
 	}
 	*other_length -= LayoutRow(rowSet, row_area, row_length, other_length);
 }
-
-//	if(children.empty())
-//		return;
-//
-//	int c = children.back();
-//
-//	vector<double> new_row(row);
-//	new_row.push_back(c);
-//
-//	printf("%f <= %f\n", worst(row, w), worst(new_row, w));
-//
-//	if (worst(row, w) > worst(new_row, w))
-//	{
-//		children.pop_back();
-//		squarify(children, new_row, w);
-//	}
-//	else
-//	{
-//		layoutrow(row);
-//		auto row = vector<double>();
-//		squarify(children, row, *current_length);
-//	}
-
-
-//void TreeMapperInt::select_direction()
-//{
-//	current_length = width > height ? &height : &width;
-//	other_length = current_length == &width ? &height : &width;
-//}
-//
-//void TreeMapperInt::layoutrow(vector<double>& row)
-//{
-//	double row_area = accumulate(row.begin(), row.end(), 0.);
-//	double width = row_area / *current_length;
-//
-//	for(double box_area : row)
-//		printf("Box (%f, %f) @%f\n", width, box_area / width, box_area);
-//
-//	*other_length -= width;
-//	select_direction();
-//	printf("Remaining area (%f, %f) @%f\n\n", width, height, width * height);
-//}
-//
-//double TreeMapperInt::worst(vector<double>& row, double w)
-//{
-//	double s = accumulate(row.begin(), row.end(), 0.);
-//	s = s * s;
-//	w = w * w;
-//
-//	auto rng = transform(row, [=](double r)->double { return max((w * r) / s, s / (w * r)); } );
-//	vector<int> row2(rng.begin(), rng.end()); // should not be required...
-//
-//	auto mi = max_element(row2.begin(), row2.end());
-//	if(mi == row2.end())
-//		return numeric_limits<double>::max();
-//
-//	return *mi;
-//}
-//
-//void TreeMapperInt::squarify(vector<double>& children, vector<double>& row, double w)
-//{
-//	if(children.empty())
-//		return;
-//
-//	int c = children.back();
-//
-//	vector<double> new_row(row);
-//	new_row.push_back(c);
-//
-//	printf("%f <= %f\n", worst(row, w), worst(new_row, w));
-//
-//	if (worst(row, w) > worst(new_row, w))
-//	{
-//		children.pop_back();
-//		squarify(children, new_row, w);
-//	}
-//	else
-//	{
-//		layoutrow(row);
-//		auto row = vector<double>();
-//		squarify(children, row, *current_length);
-//	}
-//}

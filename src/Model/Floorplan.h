@@ -1,20 +1,17 @@
-/*
- * Floorplan.h
- *
- *  Created on: 02/02/2013
- *      Author: User
- */
-
 #ifndef FLOORPLAN_H_
 #define FLOORPLAN_H_
 
-namespace Model {
+namespace Model
+{
+	class Floorplan
+	{
+		Utils::D2Array<std::shared_ptr<Room>> data;
+	public:
+		Floorplan(const Utils::Point& dimensions);
+		void Place(std::shared_ptr<Room> room);
+		std::string ToString() const;
+	};
+}
 
-class Floorplan {
-public:
-	Floorplan();
-	virtual ~Floorplan();
-};
+#endif
 
-} /* namespace Model */
-#endif /* FLOORPLAN_H_ */

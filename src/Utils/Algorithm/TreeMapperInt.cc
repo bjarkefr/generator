@@ -22,7 +22,7 @@ int TreeMapperInt::LayoutRow(const AllocationSet& rowSet, int row_area, int* row
 	int acc_length = 0;
 	for(auto alloc : rowSet)
 	{
-		int area_length = alloc->GetSize() / row_width;
+		int area_length = alloc->RequestedSize() / row_width;
 
 		int x1 = *other_length - row_width;
 		int x2 = *other_length;
@@ -41,11 +41,11 @@ int TreeMapperInt::LayoutRow(const AllocationSet& rowSet, int row_area, int* row
 
 		acc_length += area_length;
 
-		alloc->Place(shared_ptr<Area>(new Area(p1, p2)));
-		auto loc = alloc->GetLocation();
+		auto area = shared_ptr<Area>(new Area(p1, p2));
 
-		printf("Area (%i, %i) - (%i, %i) - ", loc->P1().X(), loc->P1().Y(), loc->P2().X(), loc->P2().Y());
-		printf("size (%i x %i) = %i ~ %i\n", loc->Dim().X(), loc->Dim().Y(), loc->Size(), alloc->GetSize());
+		alloc->Place(area);
+		printf("Area (%i, %i) - (%i, %i) - ", p1.X(), p1.Y(), p2.X(), p2.Y());
+		printf("size (%i x %i) = %i ~ %i\n", area->Dim().X(), area->Dim().Y(), area->Size(), alloc->RequestedSize());
 	}
 
 	printf("\n");
@@ -87,7 +87,7 @@ void TreeMapperInt::Map()
 
 	for(auto alloc = candidates->begin(); alloc != candidates->end(); ++alloc)
 	{
-		int area = (*alloc)->GetSize();
+		int area = (*alloc)->RequestedSize();
 
 		if(row_area != 0 && penalty(row_max_area, row_min_area, *row_length, row_area) < penalty(area, *row_length, row_area + area)) // Why recompute last times worst value each iteration...?
 		{

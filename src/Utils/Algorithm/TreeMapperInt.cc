@@ -6,101 +6,50 @@
 #include <cstdio>
 
 using namespace Utils;
-using namespace Utils::Algorithm2;
+using namespace Utils::Algorithm;
 
 using namespace std;
 using namespace boost::adaptors;
 
-//class AllocationSetExt : public AllocationSet
-//{
-//	shared_ptr<Allocation> smallest;
-//	shared_ptr<Allocation> largest;
-//	int total_area;
-//
-//	void Setup(shared_ptr<Allocation> initial)
-//	{
-//		push_back(initial);
-//		smallest = largest = front();
-//		total_area = initial->GetArea();
-//	}
-//
-//public:
-//	AllocationSetExt(shared_ptr<Allocation> initial)
-//	{
-//		Setup(initial);
-//	}
-//
-//	void Reset(shared_ptr<Allocation> initial)
-//	{
-//		clear();
-//		Setup(initial);
-//	}
-//
-//	void Push(shared_ptr<Allocation> allocation)
-//	{
-//		push_back(allocation);
-//		int area = allocation->GetArea();
-//
-//		if(smallest->GetArea() > area)
-//			smallest = back();
-//
-//		if(largest->GetArea() < area)
-//			largest = back();
-//
-//		total_area += area;
-//	}
-//
-//	void Pop()
-//	{
-//		Allocation& allocation = back();
-//		total_area -= allocation
-//		pop_back();
-//
-//	}
-//
-//	int GetTotalArea() const
-//	{
-//		return total_area;
-//	}
-//
-//	shared_ptr<Allocation> GetLargest() const
-//	{
-//		return largest;
-//	}
-//
-//	shared_ptr<Allocation> GetSmallest() const
-//	{
-//		return smallest;
-//	}
-//};
-
-TreeMapperInt::TreeMapperInt(const Point& dimensions, shared_ptr<AllocationSet> candidates):width(dimensions.X),height(dimensions.Y),candidates(candidates)
+TreeMapperInt::TreeMapperInt(const Point& dimensions, shared_ptr<AllocationSet> candidates):width(dimensions.X()),height(dimensions.Y()),candidates(candidates)
 {
 }
 
-void TreeMapperInt::LayoutRow(const AllocationSet& rowSet, int* row_length, int row_area)
+int TreeMapperInt::LayoutRow(const AllocationSet& rowSet, int row_area, int* row_length, int* other_length)
 {
 	int row_width = row_area / *row_length;
 
+	int acc_length = 0;
 	for(auto alloc : rowSet)
 	{
-		int area_length = alloc->GetArea() / row_width;
-		printf("Area (%i x %i) = %i\n", row_width, area_length, row_width * area_length);
+		int area_length = alloc->GetSize() / row_width;
+
+		int x1 = *other_length - row_width;
+		int x2 = *other_length;
+
+		int y1 = acc_length;
+		int y2 = acc_length + area_length;
+
+		Point p1 = Point(x1, y1);
+		Point p2 = Point(x2, y2);
+
+		if(row_length == &width)
+		{
+			p1 = p1.Swap();
+			p2 = p2.Swap();
+		}
+
+		acc_length += area_length;
+
+		alloc->Place(shared_ptr<Area>(new Area(p1, p2)));
+		auto loc = alloc->GetLocation();
+
+		printf("Area (%i, %i) - (%i, %i) - ", loc->P1().X(), loc->P1().Y(), loc->P2().X(), loc->P2().Y());
+		printf("size (%i x %i) = %i ~ %i\n", loc->Dim().X(), loc->Dim().Y(), loc->Size(), alloc->GetSize());
 	}
+
 	printf("\n");
-
-	int *other_length = row_length == &width ? &height : &width;
-	*other_length -= row_width;
-
-	//	double row_area = accumulate(row.begin(), row.end(), 0.);
-	//	double width = row_area / *current_length;
-	//
-	//	for(double box_area : row)
-	//		printf("Box (%f, %f) @%f\n", width, box_area / width, box_area);
-	//
-	//	*other_length -= width;
-	//	select_direction();
-	//	printf("Remaining area (%f, %f) @%f\n\n", width, height, width * height);
+	return row_width;
 }
 
 static int penalty(int largest_area, int smallest_area, int row_length, int row_area)
@@ -122,27 +71,35 @@ int* TreeMapperInt::SelectDirection()
 	return width > height ? &height : &width;
 }
 
+int* TreeMapperInt::OtherDirection(int* direction)
+{
+	return direction == &width ? &height : &width;
+}
+
 void TreeMapperInt::Map()
 {
-	int *row_length = SelectDirection();
+	int *row_length = SelectDirection(), *other_length = OtherDirection(row_length);
 
 	AllocationSet rowSet;
 	int row_area = 0;
-	int row_max_area = 1, row_min_area = 1;
+	int row_min_area = numeric_limits<int>::max();
+	int row_max_area = numeric_limits<int>::min();
 
 	for(auto alloc = candidates->begin(); alloc != candidates->end(); ++alloc)
 	{
-		int area = (*alloc)->GetArea();
+		int area = (*alloc)->GetSize();
 
-		if(penalty(row_max_area, row_min_area, *row_length, row_area) < penalty(area, *row_length, row_area + area))
+		if(row_area != 0 && penalty(row_max_area, row_min_area, *row_length, row_area) < penalty(area, *row_length, row_area + area)) // Why recompute last times worst value each iteration...?
 		{
-			LayoutRow(rowSet, row_length, row_area);
+			*other_length -= LayoutRow(rowSet, row_area, row_length, other_length);
 
 			row_length = SelectDirection();
+			other_length = OtherDirection(row_length);
 
 			rowSet = AllocationSet();
 			row_area = 0;
-			row_min_area = row_max_area = 1;
+			row_min_area = numeric_limits<int>::max();
+			row_max_area = numeric_limits<int>::min();
 		}
 
 		rowSet.push_back(*alloc);
@@ -152,9 +109,10 @@ void TreeMapperInt::Map()
 		if(row_min_area > area)
 			row_min_area = area;
 
-		if(row_max_area > area)
+		if(row_max_area < area)
 			row_max_area = area;
 	}
+	*other_length -= LayoutRow(rowSet, row_area, row_length, other_length);
 }
 
 //	if(children.empty())

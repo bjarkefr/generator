@@ -10,16 +10,16 @@ namespace Utils
 
 		void CheckBounds(const Point& p) const
 		{
-			if(p.Y < 0 || p.Y >= h)
+			if(p.Y() < 0 || p.Y() >= h)
 				throw std::string("Badness 10000");
-			if(p.X < 0 || p.X >= w)
+			if(p.X() < 0 || p.X() >= w)
 				throw std::string("Badness 10000");
 		}
 
 		T& Ref(const Point& p) const
 		{
 			CheckBounds(p);
-			return data[p.Y * w + p.X];
+			return data[p.Y() * w + p.X()];
 		}
 
 	public:

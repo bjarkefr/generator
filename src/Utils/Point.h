@@ -5,14 +5,17 @@ namespace Utils
 {
 	using namespace std;
 
-	class Point
+	class Point //Immutable
 	{
+		int x, y;
 	public:
-		int X, Y;
-		Point(int x, int y):X(x), Y(y) {}
-		Point operator+(const Point& p) const { return Point(X + p.X, Y + p.Y); }
-		Point operator-(const Point& p) const { return Point(X - p.X, Y - p.Y); }
-		string ToString() const { stringstream ss; ss << "(" << X << ", " << Y << ")"; return ss.str(); }
+		const int& X() const { return x; }
+		const int& Y() const { return y; }
+		Point(int x, int y):x(x), y(y) {}
+		Point Swap() { return Point(x, y); }
+		Point operator+(const Point& p) const { return Point(x + p.x, y + p.y); }
+		Point operator-(const Point& p) const { return Point(x - p.x, y - p.y); }
+		string ToString() const { stringstream ss; ss << "(" << x << ", " << y << ")"; return ss.str(); }
 	};
 }
 

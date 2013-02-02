@@ -2,10 +2,11 @@
 #include "Utils/Point.h"
 #include "Utils/Area.h"
 #include "Utils/D2Array.h"
-#include "Utils/Algorithm/TreeMapper.h"
+//#include "Utils/Algorithm/TreeMapper.h"
+#include "Utils/Algorithm/TreeMapperInt.h"
 
 using namespace std;
-using namespace boost;
+//using namespace boost;
 using namespace Utils;
 using namespace Utils::Algorithm;
 
@@ -141,16 +142,16 @@ int main(int argc, char *argv[])
 		Area a2(p3, p4);
 		//Placement place2(&room, a2);
 
-		vector<Node> nodes;
-		nodes.push_back(Node(1));
-		nodes.push_back(Node(2));
-		nodes.push_back(Node(2));
-		nodes.push_back(Node(3));
-		nodes.push_back(Node(4));
-		nodes.push_back(Node(6));
-		nodes.push_back(Node(6));
+		std::shared_ptr<vector<std::shared_ptr<Allocation>>> nodes = std::shared_ptr<vector<shared_ptr<Allocation>>>(new vector<std::shared_ptr<Allocation>>());
+		nodes->push_back(std::shared_ptr<Allocation>(new Allocation(6)));
+		nodes->push_back(std::shared_ptr<Allocation>(new Allocation(6)));
+		nodes->push_back(std::shared_ptr<Allocation>(new Allocation(4)));
+		nodes->push_back(std::shared_ptr<Allocation>(new Allocation(3)));
+		nodes->push_back(std::shared_ptr<Allocation>(new Allocation(2)));
+		nodes->push_back(std::shared_ptr<Allocation>(new Allocation(2)));
 
-		TreeMapper mapper = TreeMapper(6, 4, nodes);
+		TreeMapperInt mapper = TreeMapperInt(Point(6, 4), nodes);
+		//TreeMapper mapper = TreeMapper(6, 4, nodes);
 
 		mapper.Map();
 

@@ -2,6 +2,7 @@
 #include "Utils/Point.h"
 #include "Utils/Area.h"
 #include "Utils/D2Array.h"
+#include "Model/Room.h"
 //#include "Utils/Algorithm/TreeMapper.h"
 #include "Utils/Algorithm/TreeMapperInt.h"
 
@@ -9,44 +10,7 @@ using namespace std;
 //using namespace boost;
 using namespace Utils;
 using namespace Utils::Algorithm;
-
-enum ROOM_TYPE { PRIVATE_ROOM, PRIVATE_ROOM_STORAGE, STORAGE, BATHROOM, HALL, DUMMY};
-
-const char* ROOM_TEXTS[] = { "Private", "Private storage", "Storage", "Bathroom", "Hall", "Dummy" };
-
-const char ROOM_CHAR[] = { 'P', 'C', 'S', 'W', '.', ' ' };
-
-class Room : public Placeable
-{
-	std::shared_ptr<Area> location;
-public:
-    ROOM_TYPE Type;
-	int Size;
-
-	Room(ROOM_TYPE type, int size):Placeable(),location(0),Type(type),Size(size) {}
-
-    string GetName() const
-    {
-		return string(ROOM_TEXTS[Type]);
-    }
-
-    char GetSymbol() const
-    {
-		return ROOM_CHAR[Type];
-    }
-
-    int RequestedSize() const
-    {
-    	return Size;
-    }
-
-    void Place(std::shared_ptr<Area> location)
-    {
-    	this->location = location;
-    }
-
-    string ToString() const { stringstream ss; ss << GetName() << " S:" << Size; return ss.str(); }
-};
+using namespace Model;
 
 typedef vector<std::shared_ptr<Room>> RoomList;
 

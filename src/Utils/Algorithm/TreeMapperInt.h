@@ -1,18 +1,11 @@
 #ifndef TREEMAPPERINT_H_
 #define TREEMAPPERINT_H_
+#include "Placeable.h"
 
 namespace Utils
 {
 	namespace Algorithm
 	{
-		class Placeable
-		{
-		public:
-			virtual int RequestedSize() const = 0;
-			virtual void Place(std::shared_ptr<Area> location) = 0;
-			virtual ~Placeable() {};
-		};
-
 		typedef std::vector<std::shared_ptr<Placeable>> AllocationSet;
 
 		class TreeMapperInt

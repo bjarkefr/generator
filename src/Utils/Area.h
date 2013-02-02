@@ -1,5 +1,6 @@
 #ifndef AREA_H_
 #define AREA_H_
+#include "Point.h"
 
 namespace Utils
 {
